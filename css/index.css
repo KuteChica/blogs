@@ -1,0 +1,154 @@
+body{
+    h1{
+    font-style: italic;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 50px;
+    font-weight: bolder;
+    align-items: center;
+    text-align: center;
+    color: rgb(168, 72, 88);
+    }
+}
+header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color:rgb(168, 72, 88);
+    
+    
+}
+#links{
+    list-style: none;
+display: flex;
+    margin: 0;
+    padding: o;
+margin-right: 600px;
+gap: 30px;
+
+
+}
+#links li {
+    margin-left: 20px;
+}
+#links a {
+    text-decoration: none;
+    color: black;
+    font-weight: none;
+}
+#links a:hover {
+    color: white;
+}
+.logo img{
+    height: 20px;
+    width: auto;
+    display: block;
+
+}
+.image {
+    background-image: url(/images/download.jpg);
+    background-repeat: no-repeat;
+    height: 550px;
+    width: 100%;
+    border-radius: 20px;
+    background-size: cover;       /* makes it fill the div */
+    background-position: center;  /* keeps it centered */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    padding: 25px;
+    position: relative;
+    margin-top: 200;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.story-wrapper {
+  width: 30%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column; /* stack div and text vertically */
+  align-items: center;    /* center horizontally */
+  margin-top: 15px;
+}
+
+/* Story divs */
+.first, .second, .third, .fourth{
+  width: 100%;
+  height: 260px;
+  border-radius: 30px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  background-size: cover;
+  background-position: center;
+  margin-top: 50px;
+}
+    .fifth, .sixth ,.seventh,.last{
+  width: 100%;
+  height: 260px;
+  border-radius: 30px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  background-size: cover;
+  background-position: center;
+  margin-top: 50px;
+  opacity: 0.5;
+  pointer-events: none;
+    }
+
+/* Background images */
+.first{background-image: url("../images/black .jpg");}
+.second { background-image: url("../images/girl.jpg"); }
+.third { background-image: url("../images/dorcas.jpg"); }
+.fourth { background-image: url("../images/uncoditional.jpg"); }
+.fifth { background-image: url("../images/pray.jpg"); }
+.sixth { background-image: url("../images/bosslady.jpg"); }
+.seventh{background-image:url("../images/war.jpg");}
+.last{background-image: url("../images/worrior.jpg");}
+/* Text below each div */
+.story-footer {
+  margin-top: 10px;
+  text-align: center;
+  font-weight: none;
+  color:black;
+  font-size: small;
+  font-size: 20px;
+}
+.h6{
+    margin-bottom: 500px;
+    font-size: 1px;
+    font-family: 'Times New Roman', Times, serif;
+    line-height: 1.6;
+font-weight: normal;}
+.title{
+    color:white ;
+    margin-right: 500px;
+    font-size: 100px;
+}
+.text{
+    font-size: 20px;
+    color: white;
+}
+.read{
+    display: inline-block;
+    margin-top: 15px;
+    background-color: rgb(168, 72, 88);
+    padding: 12px 25px;
+color: aliceblue;
+font-size: 16px;
+font-weight: bold;
+text-align: center;
+text-decoration: none;
+border-radius: 8px;
+box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.read:hover{
+    background-color:white;  /* darker blue on hover */
+  transform: translateY(-2px); /* slightly lift the button */
+  box-shadow: 0 6px 8px rgba(0,0,0,0.3);
+  cursor: pointer;
+  color: black;
+}
+
+
