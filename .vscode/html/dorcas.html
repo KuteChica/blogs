@@ -6,7 +6,88 @@
     <title>Document</title>
 </head>
 <body>
-    <p>Dorcas’ eyes, once bright with hope, now held a depth of pain that seemed to swallow her whole.The memories of her husband’s fists, the words that cut deeper than any blade, and the final blow of his departure still lingered left alone, pregnant, and vulnerable, she clung to the fragile thread of hope, determined to give her unborn child a better life.
+    <style>
+        .content{
+            font-family:'Merriweather', serif;
+            font-size: 18px;
+            line-height: 1.7;
+            color: #333;
+            max-width: 700px;
+            margin: auto;
+            padding: 20px;
+            margin-bottom: 1.2em;
+        }
+        body{
+background-color: #f6e9e9; 
+color: #333;     
+  }
+  h1{
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    line-height: 1.3;;
+    text-align: center;
+  }
+
+ body.dark-mode {
+  background: #121212;
+  color: #ddd;
+ }
+ .like{
+    margin: 20px 0;
+    font-size: 1.1em;
+ }
+ #buttom{
+    background: rgb(0, 170, 255);
+    color: white;
+    border:none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition:  0.3s ease;
+ }
+#buttom :hover{
+background:rgb(55, 55, 166);
+
+}
+h3{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: rgb(168, 72, 88);
+}
+#comment-btn{
+    background-color:rgb(197, 138, 148) ;
+    border-radius: 5px;
+}
+#comment-btn:hover{
+    background-color: #f9f9f9;
+}
+#comment-input{
+    border-radius: 5px;
+}
+#button{
+    border-radius: 5px;
+}
+#button:hover{
+    background-color: rgb(168, 72, 88) ;
+}
+
+        
+    </style>
+    <div class="like">
+        <button id="button">👍 Like</button>
+        <span id="count">0</span> likes
+    </div>
+    <div class="comment-section">
+  <h3>Comments</h3>
+  <input type="text" id="comment-input" placeholder="Write a comment..." />
+  <button id="comment-btn">Post</button>
+
+  <ul id="comment-list"></ul>
+</div>
+
+    
+    <h1>Unscripted life of Dorcas</h1>
+    <p class="content">
+Dorcas’ eyes, once bright with hope, now held a depth of pain that seemed to swallow her whole.The memories of her husband’s fists, the words that cut deeper than any blade, and the final blow of his departure still lingered left alone, pregnant, and vulnerable, she clung to the fragile thread of hope, determined to give her unborn child a better life.
 
 As the contractions intensified, Dorcas’s grip on the hospital bed tightened. She had been in labor for hours, but the medical staff seemed to be in on hurry to attend to her. She called out for help. Her voice was hoarse from crying and pleading, but it seemed to fall on deaf ears.
 
@@ -24,6 +105,11 @@ Dorcas’s eyes welled up with tears as she held her newborn daughter close for 
 
 As the nurse wrapped the baby in a worn blanket, I would do everything to give you a better life, my child. I promise. In that moment, she found a glimmer of hope, a determination to rise above the hardships and build a brighter future for herself and her daughter.
 
-Even without family and husband</p>
+Even without family and husband.
+
+.</p>
+<button onclick="document.body.classList.toggle('dark-mode')">🌙 Toggle Dark Mode</button>
+<script src="like.js"></script>
+
 </body>
 </html>
