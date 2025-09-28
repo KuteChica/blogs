@@ -1,0 +1,166 @@
+body{
+
+  background-color: rgb(245, 220, 225); /* very light pink */
+
+}
+
+.image{
+    background-color: rgb(223, 127, 143);
+    height: auto;
+    border-radius: 20px;
+    align-items: center;
+    width: 50%;
+    padding: 10px;
+    justify-content: space-between;
+    display: flex;
+
+
+
+
+}
+.image img{
+    width: 239px;
+    height: auto;
+    border-radius: 40px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+ transition: transform 0.3s ease, filter 0.3s ease;
+ margin-top: 10px;
+ margin-right:70px;
+ margin-left: 50px;
+
+
+
+}
+
+.her{
+background-color: rgb(100, 150, 150);
+
+
+
+    border-radius: 20px;
+    padding: 20px;
+   width: auto;
+    height: 450px;
+    margin-left: 55%;
+    margin-top: -400px;
+
+    
+    
+}
+/*animations part*/
+.image, .her {
+  opacity: 0;
+  transform: translateY(40px);   /* start lower */
+  animation: fadeUp 2s ease-out forwards;
+}
+
+/* delay the second div so they don’t appear at the same time */
+.image, .her {
+  opacity: 0;
+  transform: translateY(40px);   /* start lower */
+  animation: fadeUp 2s ease-out forwards;
+}
+
+/* delay the second div so they don’t appear at the same time */
+.her {
+  animation-delay: 0.5s;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* hover should only add glow, not re-animate position */
+.image:hover, .her:hover {
+  box-shadow: 0 0 20px rgba(95, 188, 235, 0.6);
+  transition: box-shadow 0.3s ease;
+}
+
+
+.image img:hover{
+     transform: scale(1.05); /* zoom in */
+  filter: brightness(1.2); /* brighten */
+
+}
+
+h2{
+    margin-left: 40%;
+    font-size: 40px;
+    color: white;
+}
+.me{
+
+    color: white;
+    font-size: 50px;
+font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+font-weight: 900;
+margin-right: 100%;
+text-align: left;
+
+
+}
+.text{
+    color: white;
+    font-size: 30px;
+}
+
+
+header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: rgb(245, 220, 225);;
+}
+#links{
+    list-style: none;
+display: flex;
+    margin: 0;
+    padding: o;
+margin-right: 600px;
+gap: 30px;
+
+
+}
+#links li {
+    margin-left: 20px;
+}
+#links a {
+    text-decoration: none;
+    color:  rgb(48, 8, 14);
+    font-weight: none;
+}
+#links a:hover {
+    color: white;
+}
+.logo img{
+    height: 100px;
+    width: auto;
+    display: block;
+    margin-left: 450%;
+
+}
+#me{
+    font-size: 20px;
+    margin-right: 150px;
+}
+/*button*/
+.next-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #a84858, #ff7b92);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.next-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
