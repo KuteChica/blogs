@@ -144,7 +144,7 @@ header {
 }
 
 /* Background images */
-.first { background-image: url("/images/black\ .jpg"); }
+.first { background-image: url("../images/black.jpg"); }
 .second { background-image: url("../images/girl.jpg"); }
 .third { background-image: url("../images/dorcas.jpg"); }
 .fourth { background-image: url("../images/uncoditional.jpg"); }
