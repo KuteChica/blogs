@@ -12,6 +12,7 @@
   padding: 20px;
   border-radius: 15px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  font-size: 30px;
 }
 
 .contact-info ul {
@@ -90,4 +91,54 @@
 }
 body{
     background-color: rgb(241, 229, 232);
+}
+#links {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  margin-right: 2rem; /* use relative spacing */
+  gap: 30px;
+}
+
+/*links*/
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: rgb(245, 220, 225);
+  flex-wrap: wrap;
+}
+/*links*/
+#links {
+  text-align: center; /* center the buttons */
+  margin: 20px 0;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 25px;
+  margin: 10px;
+  font-size: 18px;
+  font-family: 'Poppins', sans-serif;
+  text-decoration: none;
+  color: white;
+  background: rgb(168, 72, 88); /* main color */
+  border-radius: 30px;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+/* Hover effect */
+.btn:hover {
+  background:gray;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+.logo img {
+  height: 100px;
+  width: auto;
+  display: block;
 }
