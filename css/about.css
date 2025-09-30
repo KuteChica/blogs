@@ -111,7 +111,7 @@ header {
 
 /* Right Section */
 .rightdiv {
-  background-image: url("/images/background.jpeg");
+  background-image: url("images/background.jpeg");
   padding: 15px;
   border-radius: 10px;
   height: auto;

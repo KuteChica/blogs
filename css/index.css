@@ -92,15 +92,15 @@ header {
   margin: 20px auto;
   color: white;
 
-  background: url("/images/download.jpg") no-repeat center/cover;
+  background: url("images/download.jpg") no-repeat center/cover;
   animation: slide 20s infinite;
 }
 
 @keyframes slide {
-  0%   { background-image: url("/images/write.jpeg"); }
-  33%  { background-image: url("/images/them.jpeg"); }
-  66%  { background-image: url("/images/download.jpg"); }
-  100% { background-image: url("/images/write.jpeg"); }
+  0%   { background-image: url("images/write.jpeg"); }
+  33%  { background-image: url("images/them.jpeg"); }
+  66%  { background-image: url("images/download.jpg"); }
+  100% { background-image: url("images/write.jpeg"); }
 }
 
 /* Story grid */
