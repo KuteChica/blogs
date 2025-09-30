@@ -38,6 +38,8 @@
   border: 1px solid #ccc;
   font-size: 16px;
   transition: 0.3s;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .contact-form input:focus,
@@ -53,7 +55,7 @@
 }
 
 .contact-form .btn {
-  background:rgb(168, 72, 88);
+  background: rgb(168, 72, 88);
   color: white;
   border: none;
   padding: 12px;
@@ -67,6 +69,7 @@
   background: #454142;
   transform: translateY(-2px);
 }
+
 .about-heading {
   margin-top: 1px;
   font-family: 'Georgia', serif;
@@ -76,8 +79,6 @@
   border-bottom: 2px solid #e6b8c4;
   padding-bottom: 5px;
   text-align: center;
-}
-.about-heading{
   opacity: 0;
   transform: translateY(20px);
   animation: fadeSlideUp 1.5s ease-out forwards;
@@ -89,19 +90,13 @@
     transform: translateY(0);
   }
 }
-body{
-    background-color: rgb(241, 229, 232);
-}
-#links {
-  list-style: none;
-  display: flex;
+
+body {
+  background-color: rgb(241, 229, 232);
   margin: 0;
-  padding: 0;
-  margin-right: 2rem; /* use relative spacing */
-  gap: 30px;
+  font-family: Arial, sans-serif;
 }
 
-/*links*/
 /* Header */
 header {
   display: flex;
@@ -111,10 +106,21 @@ header {
   background-color: rgb(245, 220, 225);
   flex-wrap: wrap;
 }
-/*links*/
+
+/* Nav links */
 #links {
-  text-align: center; /* center the buttons */
-  margin: 20px 0;
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  margin-right: 2rem;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#links li {
+  display: inline-block;
 }
 
 .btn {
@@ -125,14 +131,14 @@ header {
   font-family: 'Poppins', sans-serif;
   text-decoration: none;
   color: white;
-  background: rgb(168, 72, 88); /* main color */
+  background: rgb(168, 72, 88);
   border-radius: 30px;
   transition: 0.3s ease;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-/* Hover effect */
+
 .btn:hover {
-  background:gray;
+  background: gray;
   transform: translateY(-3px);
   box-shadow: 0 6px 15px rgba(0,0,0,0.2);
 }
@@ -141,4 +147,59 @@ header {
   height: 100px;
   width: auto;
   display: block;
+}
+
+/* ---------------- RESPONSIVE DESIGN ---------------- */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .about-heading {
+    font-size: 40px;
+  }
+
+  .contact-info {
+    font-size: 24px;
+  }
+
+  .logo img {
+    height: 80px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #links {
+    flex-direction: column;
+    gap: 15px;
+    margin: 10px 0;
+  }
+
+  .contact-container {
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px;
+  }
+
+  .contact-info {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .about-heading {
+    font-size: 32px;
+  }
+
+  .btn {
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+
+  .logo img {
+    height: 60px;
+  }
 }
