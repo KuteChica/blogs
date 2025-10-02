@@ -279,9 +279,10 @@
       background-position: center;
     }
     
-    .slide-1 { background-image: url("/images/write.jpeg"); }
-    .slide-2 { background-image: url("/images/them.jpeg"); }
-    .slide-3 { background-image: url("/images/download.jpg"); }
+    .slide-1 { background-image: url("../images/write.jpeg"); }
+.slide-2 { background-image: url("../images/them.jpeg"); }
+.slide-3 { background-image: url("../images/download.jpg"); }
+
 
     @keyframes slide {
       0% { transform: translateX(0); }
@@ -360,14 +361,15 @@
     }
 
     /* Story background images */
-    .first { background-image: url("/images/black.jpg"); }
-    .second { background-image: url("/images/girl.jpg"); }
-    .third { background-image: url("/images/dorcas.jpg"); }
-    .fourth { background-image: url("/images/uncoditional.jpg"); }
-    .fifth { background-image: url("/images/pray.jpg"); }
-    .sixth { background-image: url("/images/bosslady.jpg"); }
-    .seventh { background-image: url("/images/war.jpg"); }
-    .last { background-image: url("/images/worrior.jpg"); }
+    .first   { background-image: url("../images/black.jpg"); }
+.second  { background-image: url("../images/girl.jpg"); }
+.third   { background-image: url("../images/dorcas.jpg"); }
+.fourth  { background-image: url("../images/uncoditional.jpg"); }
+.fifth   { background-image: url("../images/pray.jpg"); }
+.sixth   { background-image: url("../images/bosslady.jpg"); }
+.seventh { background-image: url("../images/war.jpg"); }
+.last    { background-image: url("../images/worrior.jpg"); }
+
 
     /* Coming Soon Cards */
     .coming-soon {
