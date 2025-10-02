@@ -4,42 +4,108 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About - Unscripted Lifewriter</title>
-  <link rel="stylesheet" href="css/about.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/about.css">
 </head>
 <body>
   <!-- Header -->
   <header>
     <div class="logo">
-      <img src="images/logo.png" alt="Unscripted Lifewriter Logo">
+      <img src="/images/logo.png" alt="Unscripted Lifewriter Logo">
     </div>
+    
+    <!-- Mobile Menu Toggle -->
+    <div class="menu-toggle" id="menuToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    
     <nav>
       <ul id="links">
-        <li><a href="index.html" class="btn">Blog </a></li>
-        <li><a href="index.html" class="btn">Home</a></li>
-        <li><a href="about.html" class="btn">About</a></li>
-        <li><a href="contact.html" class="btn">Contact</a></li>
+        <li><a href="/index.html" class="btn">Home</a></li>
+        <li><a href="html/blog.html" class="btn">Blog</a></li>
+        <li><a href="html/about.html" class="btn active">About</a></li>
+        <li><a href="html/contact.html" class="btn">Contact</a></li>
       </ul>
-    </nav> 
+    </nav>
+    
+    <!-- Mobile Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
   </header>
 
   <!-- About Section -->
+  <section class="about-section">
+    <div class="about-heading">
+      <h1>About Me</h1>
+    </div>
+    
+    <div class="about-content">
+      <div class="about-image">
+        <img src="/images/sis.png" alt="Unscripted Lifewriter">
+      </div>
+      
+      <div class="about-text">
+        <h1>Hi! I am Unscripted Lifewriter</h1>
+        <h3>Writing has always been my way of giving life to the many thoughts in my mind. What began with listening to podcasts and journaling has grown into this blog—my creative space to share stories, poems, and personal reflections.</h3>
+        
+        <h3>Here, you'll find original writings filled with ideas, experiences, and creativity meant to inspire and connect with readers. My goal is to grow as a writer, build an online presence, and share content that resonates deeply with others.</h3>
+        
+        <h3>Outside of blogging, I enjoy exploring my passions and expressing myself in unique ways.</h3>
+        
+        <div class="quote">
+          <p>"The only way to do great work is to love what you do."</p>
+          <p class="quote-author">— Steve Jobs</p>
+        </div>
+        
+        <h3>This quote guides me in my writing journey, reminding me to stay passionate and authentic in everything I create.</h3>
+      </div>
+    </div>
+  </section>
 
-  
-<!--the image within the portofolio-->
-<h1 class="about">About me</h1>
-<div class="pic">
-   <img src="images/sis.png" alt="me" class="port">
-   <div class="rightdiv">
-    <h1>hi! i am unscripted Lifewriter</h1>
-    <h3>Writing has always been my way of giving life to the many thoughts in my mind. What began with listening to podcasts and journaling has grown into this blog—my creative space to share stories, poems, and personal reflections.
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <h3>Unscripted Lifewriter</h3>
+      <p>Stories that celebrate the beautiful unpredictability of life</p>
+      <div class="social-links">
+        <a href="#" aria-label="WhatsApp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        <a href="#" aria-label="Facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" aria-label="Instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+      </div>
+      <p class="copyright">&copy; 2025 Unscripted Lifewriter. All rights reserved.</p>
+    </div>
+  </footer>
 
-Here, you’ll find original writings filled with ideas, experiences, and creativity meant to inspire and connect with readers. My goal is to grow as a writer, build an online presence, and share content that resonates deeply with others.
-
-Outside of blogging, I enjoy exploring my passions and expressing myself in unique ways. One of my favorite quotes that guides me is:
-"The only way to do great work is to love what you do." — Steve Jobs</h3>
-   </div>
-</div>
-
-</section>
+  <script>
+    // Mobile menu functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuToggle = document.getElementById('menuToggle');
+      const menuLinks = document.getElementById('links');
+      const menuOverlay = document.getElementById('menuOverlay');
+      
+      menuToggle.addEventListener('click', function() {
+        menuToggle.classList.toggle('active');
+        menuLinks.classList.toggle('active');
+        menuOverlay.classList.toggle('active');
+      });
+      
+      menuOverlay.addEventListener('click', function() {
+        menuToggle.classList.remove('active');
+        menuLinks.classList.remove('active');
+        menuOverlay.classList.remove('active');
+      });
+      
+      // Close menu when clicking on a link
+      const menuItems = document.querySelectorAll('#links .btn');
+      menuItems.forEach(item => {
+        item.addEventListener('click', function() {
+          menuToggle.classList.remove('active');
+          menuLinks.classList.remove('active');
+          menuOverlay.classList.remove('active');
+        });
+      });
+    });
+  </script>
 </body>
 </html>
