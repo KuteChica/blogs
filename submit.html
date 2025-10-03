@@ -74,12 +74,13 @@
       }
 
       try {
-        await addDoc(collection(db, "stories"), {
-          title,
-          content,
-          imageUrl,
-          timestamp: Date.now()
-        });
+   await addDoc(collection(db, "stories"), {
+  title,
+  content,
+  imageUrl,
+  likes: 0, // ✅ This adds the like field immediately
+  timestamp: Date.now()
+});
         alert("Story posted successfully!");
         window.location.href = "homepage.html";
       } catch (error) {

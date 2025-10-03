@@ -42,7 +42,18 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      updateDoc,
+      increment,
+      collection,
+      addDoc,
+      query,
+      where,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBq_YkDy8uPaAVqmNLyUlNhocGp8Er9Prc",
@@ -59,30 +70,76 @@
     const params = new URLSearchParams(window.location.search);
     const storyId = params.get("id");
 
-    if (!storyId) {
-      document.getElementById("story-title").textContent = "No story selected";
-      document.getElementById("story-content").textContent = "";
-    } else {
-      const docRef = doc(db, "stories", storyId);
-      const docSnap = await getDoc(docRef);
+    const titleEl = document.getElementById("story-title");
+    const contentEl = document.getElementById("story-content");
+    const imageEl = document.getElementById("story-image");
+    const likeBtn = document.getElementById("button");
+    const likeCount = document.getElementById("count");
+    const commentInput = document.getElementById("comment-input");
+    const commentBtn = document.getElementById("comment-btn");
+    const commentList = document.getElementById("comment-list");
 
-      if (docSnap.exists()) {
-        const story = docSnap.data();
-        document.getElementById("story-title").textContent = story.title;
-        document.getElementById("story-content").textContent = story.content;
+    if (!storyId) {
+      titleEl.textContent = "No story selected";
+      contentEl.textContent = "";
+    } else {
+      const storyRef = doc(db, "stories", storyId);
+      const storySnap = await getDoc(storyRef);
+
+      if (storySnap.exists()) {
+        const story = storySnap.data();
+        titleEl.textContent = story.title;
+        contentEl.textContent = story.content;
+        likeCount.textContent = story.likes || 0;
 
         if (story.imageUrl) {
-          const image = document.getElementById("story-image");
-          image.src = story.imageUrl;
-          image.style.display = "block";
+          imageEl.src = story.imageUrl;
+          imageEl.style.display = "block";
         }
       } else {
-        document.getElementById("story-title").textContent = "Story not found";
-        document.getElementById("story-content").textContent = "";
+        titleEl.textContent = "Story not found";
+        contentEl.textContent = "";
       }
+
+      // Like button
+      likeBtn.addEventListener("click", async () => {
+        await updateDoc(storyRef, { likes: increment(1) });
+        const updatedSnap = await getDoc(storyRef);
+        likeCount.textContent = updatedSnap.data().likes;
+      });
+
+      // Comment button
+      commentBtn.addEventListener("click", async () => {
+        const text = commentInput.value.trim();
+        if (!text) return;
+
+        await addDoc(collection(db, "comments"), {
+          storyId,
+          text,
+          timestamp: Date.now()
+        });
+
+        commentInput.value = "";
+        loadComments();
+      });
+
+      // Load comments
+      async function loadComments() {
+        const q = query(collection(db, "comments"), where("storyId", "==", storyId));
+        const snapshot = await getDocs(q);
+        commentList.innerHTML = "";
+
+        snapshot.forEach((doc) => {
+          const comment = doc.data();
+          const li = document.createElement("li");
+          li.textContent = comment.text;
+          commentList.appendChild(li);
+        });
+      }
+
+      loadComments();
     }
   </script>
-
-  <script src="like.js"></script>
+  
 </body>
 </html>

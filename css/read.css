@@ -1,3 +1,144 @@
+body {
+  background-color: #f6e9e9;
+  color: #333;
+}
+
+body.dark-mode {
+  background: #121212;
+  color: #ddd;
+}
+
+h1 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.content {
+  font-family: 'Merriweather', serif;
+  font-size: 18px;
+  line-height: 1.7;
+  color: #333;
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+  margin-bottom: 1.2em;
+}
+
+.like {
+  margin: 20px 0;
+  font-size: 1.1em;
+}
+
+#buttom {
+  background: rgb(0, 170, 255);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+#buttom:hover {
+  background: rgb(55, 55, 166);
+}
+
+h3 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: rgb(168, 72, 88);
+}
+
+#comment-btn {
+  background-color: rgb(197, 138, 148);
+  border-radius: 5px;
+}
+
+#comment-btn:hover {
+  background-color: #f9f9f9;
+}
+
+#comment-input {
+  border-radius: 5px;
+}
+
+#button {
+  border-radius: 5px;
+}
+
+#button:hover {
+  background-color: rgb(168, 72, 88);
+}
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: rgb(245, 220, 225);
+  flex-wrap: wrap;
+}
+
+/* Nav links */
+#links {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  margin-right: 2rem;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#links li {
+  display: inline-block;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 25px;
+  margin: 10px;
+  font-size: 18px;
+  font-family: 'Poppins', sans-serif;
+  text-decoration: none;
+  color: white;
+  background: rgb(168, 72, 88);
+  border-radius: 30px;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.btn:hover {
+  background: gray;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+.logo img {
+  height: 100px;
+  width: auto;
+  display: block;
+}
+
+/* ---------------- RESPONSIVE DESIGN ---------------- */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .about-heading {
+    font-size: 40px;
+  }
+
+  .contact-info {
+    font-size: 24px;
+  }
+
+  .logo img {
+    height: 80px;
+  }
+}
+
 /* Mobile */
 @media (max-width: 600px) {
   header {
@@ -11,6 +152,21 @@
     margin: 10px 0;
   }
 
+  .contact-container {
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px;
+  }
+
+  .contact-info {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .about-heading {
+    font-size: 32px;
+  }
+
   .btn {
     font-size: 16px;
     padding: 10px 20px;
@@ -18,53 +174,5 @@
 
   .logo img {
     height: 60px;
-  }
-
-  h1 {
-    font-size: 28px;
-    padding: 10px;
-  }
-
-  h3 {
-    font-size: 20px;
-    text-align: center;
-    padding: 10px;
-  }
-
-  .content {
-    font-size: 16px;
-    padding: 15px;
-    width: 90%;
-    margin: auto;
-  }
-
-  .like {
-    font-size: 1em;
-    text-align: center;
-    padding: 10px;
-  }
-
-  #comment-input {
-    width: 90%;
-    font-size: 15px;
-    padding: 10px;
-    margin-bottom: 10px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  #comment-btn {
-    display: block;
-    margin: 0 auto 20px auto;
-    font-size: 15px;
-    padding: 10px 20px;
-  }
-
-  #story-image {
-    width: 90%;
-    height: auto;
-    display: block;
-    margin: 20px auto;
   }
 }
