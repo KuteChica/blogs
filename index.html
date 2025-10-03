@@ -27,9 +27,13 @@
         <li><a href="#blog" class="btn">Blog</a></li>
        <li><a href="about.html" class="btn">About</a></li>
 <li><a href="contact.html" class="btn">Contact</a></li>
+<li><a href="#" onclick="authorizeAccess()" class="btn">Add story</a></li>
+
 
       </ul>
     </nav>
+
+
     
     <!-- Mobile Menu Overlay -->
     <div class="menu-overlay" id="menuOverlay"></div>
@@ -128,6 +132,10 @@
       </div>
     </article>
   </section>
+      <!--more stories button-->
+    <div>
+  <button onclick="location.href='homepage.html'" class="btn">More Stories</button>
+</div>
 
   <!-- Footer -->
   <footer>
@@ -173,8 +181,19 @@
       });
     });
     
-  alert("Site is temporarily paused. Please check back later.");
-  window.location.href = "https://example.com"; // optional redirect
+
+  function authorizeAccess() {
+    const pin = prompt("Enter your access PIN:");
+    const correctPin = "sherifa"; // Change this to your sister's secret PIN
+
+    if (pin === correctPin) {
+      window.location.href = "submit.html";
+    } else {
+      alert("❌ Incorrect PIN. Access denied.");
+    }
+  }
+
+
 
 
   </script>
