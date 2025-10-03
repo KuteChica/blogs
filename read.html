@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Read Story</title>
+  <link rel="stylesheet" href="css/read.css" />
+</head>
+<body>
+  <div class="like">
+    <button id="button">👍 Like</button>
+    <span id="count">0</span> likes
+  </div>
+
+  <div class="comment-section">
+    <h3>Comments</h3>
+    <input type="text" id="comment-input" placeholder="Write a comment..." />
+    <button id="comment-btn">Post</button>
+    <ul id="comment-list"></ul>
+  </div>
+
+  <h1 id="story-title">Loading...</h1>
+  <p class="content" id="story-content">Please wait while we load your story.</p>
+
+  <button onclick="document.body.classList.toggle('dark-mode')">🌙 Toggle Dark Mode</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBq_YkDy8uPaAVqmNLyUlNhocGp8Er9Prc",
+      authDomain: "sisblog.firebaseapp.com",
+      projectId: "sisblog",
+      storageBucket: "sisblog.appspot.com",
+      messagingSenderId: "353586425293",
+      appId: "1:353586425293:web:9a81103540a665bc4e6884"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const storyId = params.get("id");
+
+    if (storyId) {
+      const docRef = doc(db, "stories", storyId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const story = docSnap.data();
+        document.getElementById("story-title").textContent = story.title;
+        document.getElementById("story-content").textContent = story.content;
+      } else {
+        document.getElementById("story-title").textContent = "Story not found";
+        document.getElementById("story-content").textContent = "";
+      }
+    }
+  </script>
+
+  <script src="like.js"></script>
+</body>
+</html>

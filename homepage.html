@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Story Gallery</title>
+  <link rel="stylesheet" href="css/homepage.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <img src="images/logo.png" alt="Logo">
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <div class="menu-toggle" id="menuToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <nav>
+      <ul id="links">
+        <li><a href="index.html" class="btn active">Home</a></li>
+        <li><a href="#blog" class="btn">Blog</a></li>
+        <li><a href="about.html" class="btn">About</a></li>
+        <li><a href="contact.html" class="btn">Contact</a></li>
+      </ul>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+  </header>
+
+  <h1>Latest Stories</h1>
+  <div class="container" id="story-list"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBq_YkDy8uPaAVqmNLyUlNhocGp8Er9Prc",
+      authDomain: "sisblog.firebaseapp.com",
+      projectId: "sisblog",
+      storageBucket: "sisblog.appspot.com",
+      messagingSenderId: "353586425293",
+      appId: "1:353586425293:web:9a81103540a665bc4e6884"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const storyList = document.getElementById('story-list');
+    const q = query(collection(db, "stories"), orderBy("timestamp", "desc"));
+    const snapshot = await getDocs(q);
+
+    snapshot.forEach(doc => {
+      const story = doc.data();
+      const storyId = doc.id;
+
+      const imageUrl = story.imageUrl || "images/default.jpg"; // fallback if no image
+
+      const card = document.createElement('div');
+      card.className = "story-wrapper";
+
+      card.innerHTML = `
+        <div class="story-image" style="background-image: url('${imageUrl}');"></div>
+        <div class="story-content">
+          <h3>${story.title}</h3>
+          <p>${story.content.substring(0, 100)}...</p>
+          <button class="fafa" onclick="location.href='read.html?id=${storyId}'">Read</button>
+        </div>
+      `;
+
+      storyList.appendChild(card);
+    });
+  </script>
+</body>
+</html>
