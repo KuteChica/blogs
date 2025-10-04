@@ -50,10 +50,16 @@
       increment,
       collection,
       addDoc,
+      deleteDoc,
       query,
       where,
-      getDocs
+      getDocs,
+      orderBy
     } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBq_YkDy8uPaAVqmNLyUlNhocGp8Er9Prc",
@@ -66,6 +72,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth();
 
     const params = new URLSearchParams(window.location.search);
     const storyId = params.get("id");
@@ -79,67 +86,165 @@
     const commentBtn = document.getElementById("comment-btn");
     const commentList = document.getElementById("comment-list");
 
-    if (!storyId) {
-      titleEl.textContent = "No story selected";
-      contentEl.textContent = "";
+    const storyRef = doc(db, "stories", storyId);
+    const storySnap = await getDoc(storyRef);
+
+    if (storySnap.exists()) {
+      const story = storySnap.data();
+      titleEl.textContent = story.title;
+      contentEl.textContent = story.content;
+      likeCount.textContent = story.likes || 0;
+
+      if (story.imageUrl) {
+        imageEl.src = story.imageUrl;
+        imageEl.style.display = "block";
+      }
     } else {
-      const storyRef = doc(db, "stories", storyId);
-      const storySnap = await getDoc(storyRef);
+      titleEl.textContent = "Story not found";
+      contentEl.textContent = "";
+    }
 
-      if (storySnap.exists()) {
-        const story = storySnap.data();
-        titleEl.textContent = story.title;
-        contentEl.textContent = story.content;
-        likeCount.textContent = story.likes || 0;
+    let currentUser = null;
 
-        if (story.imageUrl) {
-          imageEl.src = story.imageUrl;
-          imageEl.style.display = "block";
-        }
-      } else {
-        titleEl.textContent = "Story not found";
-        contentEl.textContent = "";
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+
+      if (!user) {
+        likeBtn.disabled = true;
+        likeBtn.textContent = "Login to Like";
+        commentBtn.disabled = true;
+        commentInput.placeholder = "Login to comment";
+        return;
       }
 
-      // Like button
+      const likeQuery = query(
+        collection(db, "likes"),
+        where("storyId", "==", storyId),
+        where("userId", "==", user.uid)
+      );
+      const likeSnap = await getDocs(likeQuery);
+      if (!likeSnap.empty) {
+        likeBtn.disabled = true;
+        likeBtn.textContent = "Liked ❤️";
+      }
+
       likeBtn.addEventListener("click", async () => {
         await updateDoc(storyRef, { likes: increment(1) });
-        const updatedSnap = await getDoc(storyRef);
-        likeCount.textContent = updatedSnap.data().likes;
+        await addDoc(collection(db, "likes"), {
+          storyId,
+          userId: user.uid,
+          timestamp: Date.now()
+        });
+        likeCount.textContent = parseInt(likeCount.textContent) + 1;
+        likeBtn.disabled = true;
+        likeBtn.textContent = "Liked ❤️";
       });
 
-      // Comment button
       commentBtn.addEventListener("click", async () => {
         const text = commentInput.value.trim();
         if (!text) return;
 
         await addDoc(collection(db, "comments"), {
           storyId,
+          userId: user.uid,
+          username: user.displayName || user.email,
           text,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          parentId: null // ✅ FIXED: ensures top-level comment is visible
         });
 
         commentInput.value = "";
         loadComments();
       });
+    });
 
-      // Load comments
-      async function loadComments() {
-        const q = query(collection(db, "comments"), where("storyId", "==", storyId));
-        const snapshot = await getDocs(q);
-        commentList.innerHTML = "";
+    async function loadComments() {
+      const q = query(
+        collection(db, "comments"),
+        where("storyId", "==", storyId),
+        where("parentId", "==", null),
+        orderBy("timestamp", "asc")
+      );
+      const snapshot = await getDocs(q);
+      commentList.innerHTML = "";
 
-        snapshot.forEach((doc) => {
-          const comment = doc.data();
-          const li = document.createElement("li");
-          li.textContent = comment.text;
-          commentList.appendChild(li);
+      snapshot.forEach((docSnap) => {
+        const comment = docSnap.data();
+        const commentId = docSnap.id;
+
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${comment.username}</strong>: ${comment.text}
+          <div style="margin-top:5px;">
+            <button class="reply-btn" data-id="${commentId}">Reply</button>
+            ${currentUser && currentUser.uid === comment.userId ? `<button class="delete-btn" data-id="${commentId}">Delete</button>` : ""}
+          </div>
+          <ul class="replies" id="replies-${commentId}"></ul>
+        `;
+        commentList.appendChild(li);
+
+        loadReplies(commentId);
+      });
+
+      document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-id");
+          await deleteDoc(doc(db, "comments", id));
+          loadComments();
         });
-      }
+      });
 
-      loadComments();
+      document.querySelectorAll(".reply-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-id");
+          const replyInput = document.createElement("input");
+          replyInput.placeholder = "Write a reply...";
+          const replyBtn = document.createElement("button");
+          replyBtn.textContent = "Post Reply";
+
+          btn.parentElement.appendChild(replyInput);
+          btn.parentElement.appendChild(replyBtn);
+
+          replyBtn.addEventListener("click", async () => {
+            const replyText = replyInput.value.trim();
+            if (!replyText) return;
+
+            await addDoc(collection(db, "comments"), {
+              storyId,
+              parentId: id,
+              userId: currentUser.uid,
+              username: currentUser.displayName || currentUser.email,
+              text: replyText,
+              timestamp: Date.now()
+            });
+
+            loadComments();
+          });
+
+          btn.disabled = true;
+        });
+      });
     }
+
+    async function loadReplies(parentId) {
+      const q = query(
+        collection(db, "comments"),
+        where("storyId", "==", storyId),
+        where("parentId", "==", parentId),
+        orderBy("timestamp", "asc")
+      );
+      const snapshot = await getDocs(q);
+      const container = document.getElementById(`replies-${parentId}`);
+
+      snapshot.forEach((docSnap) => {
+        const reply = docSnap.data();
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${reply.username}</strong> ↪ ${reply.text}`;
+        container.appendChild(li);
+      });
+    }
+
+    loadComments();
   </script>
-  
 </body>
 </html>

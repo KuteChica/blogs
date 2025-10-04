@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login | Shuttle System</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="Css/login.css">
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      text-align: center;
+      padding: 2em;
+    }
+
+    .login-container {
+      max-width: 400px;
+      margin: auto;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border-color: #9c4a5c;
+      margin: 8px 0;
+    }
+
+    button {
+      padding: 10px 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <img src="images/logo.png" alt="unscripted" style="width:150px;">
+    <h1>Login</h1>
+
+    <form id="loginForm" class="form">
+      <div id="loginMessage" class="messagediv" style="display:none"></div>
+
+      <input type="email" id="email" placeholder="Email" required><br><br>
+      <input type="password" id="password" placeholder="Password" required><br><br>
+      <button id="submitLogin" type="submit">Login</button><br><br>
+
+      <p>New here? <a href="signup.html">Sign up</a></p>
+    </form>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBq_YkDy8uPaAVqmNLyUlNhocGp8Er9Prc",
+      authDomain: "sisblog.firebaseapp.com",
+      databaseURL: "https://sisblog-default-rtdb.firebaseio.com",
+      projectId: "sisblog",
+      storageBucket: "sisblog.appspot.com",
+      messagingSenderId: "353586425293",
+      appId: "1:353586425293:web:9a81103540a665bc4e6884"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const loginForm = document.getElementById("loginForm");
+    const loginMessage = document.getElementById("loginMessage");
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        loginMessage.style.display = "block";
+        loginMessage.textContent = "Login successful!";
+        loginMessage.style.color = "green";
+
+        // Redirect to homepage or dashboard
+        window.location.href = "index.html";
+      } catch (error) {
+        loginMessage.style.display = "block";
+        loginMessage.textContent = error.message;
+        loginMessage.style.color = "red";
+        
+      }
+    });
+  </script>
+</body>
+</html>
