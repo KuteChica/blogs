@@ -40,7 +40,7 @@
     <button onclick="document.body.classList.toggle('dark-mode')">🌙 Toggle Dark Mode</button>
   </main>
 
-  <script type="module">
+<script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
   import {
     getFirestore,
@@ -54,7 +54,8 @@
     query,
     where,
     getDocs,
-    orderBy
+    orderBy,
+    onSnapshot
   } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
   import {
     getAuth,
@@ -152,77 +153,75 @@
         });
 
         commentInput.value = "";
-        await loadComments(); // ✅ Now runs after comment is posted
       });
     }
 
-    await loadComments(); // ✅ Moved inside auth block to ensure currentUser is ready
+    listenToComments(); // ✅ Real-time listener
   });
 
-  async function loadComments() {
+  function listenToComments() {
     const q = query(
       collection(db, "comments"),
       where("storyId", "==", storyId),
       where("parentId", "==", null),
       orderBy("timestamp", "asc")
     );
-    const snapshot = await getDocs(q);
-    commentList.innerHTML = "";
 
-    snapshot.forEach((docSnap) => {
-      const comment = docSnap.data();
-      const commentId = docSnap.id;
+    onSnapshot(q, (snapshot) => {
+      commentList.innerHTML = "";
 
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <strong>${comment.username}</strong>: ${comment.text}
-        <div style="margin-top:5px;">
-          <button class="reply-btn" data-id="${commentId}">Reply</button>
-          ${currentUser && currentUser.uid === comment.userId ? `<button class="delete-btn" data-id="${commentId}">Delete</button>` : ""}
-        </div>
-        <ul class="replies" id="replies-${commentId}"></ul>
-      `;
-      commentList.appendChild(li);
+      snapshot.forEach((docSnap) => {
+        const comment = docSnap.data();
+        const commentId = docSnap.id;
 
-      loadReplies(commentId);
-    });
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${comment.username}</strong>: ${comment.text}
+          <div style="margin-top:5px;">
+            <button class="reply-btn" data-id="${commentId}">Reply</button>
+            ${currentUser && currentUser.uid === comment.userId ? `<button class="delete-btn" data-id="${commentId}">Delete</button>` : ""}
+          </div>
+          <ul class="replies" id="replies-${commentId}"></ul>
+        `;
+        commentList.appendChild(li);
 
-    document.querySelectorAll(".delete-btn").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const id = btn.getAttribute("data-id");
-        await deleteDoc(doc(db, "comments", id));
-        await loadComments();
+        loadReplies(commentId);
       });
-    });
 
-    document.querySelectorAll(".reply-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = btn.getAttribute("data-id");
-        const replyInput = document.createElement("input");
-        replyInput.placeholder = "Write a reply...";
-        const replyBtn = document.createElement("button");
-        replyBtn.textContent = "Post Reply";
+      document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-id");
+          await deleteDoc(doc(db, "comments", id));
+        });
+      });
 
-        btn.parentElement.appendChild(replyInput);
-        btn.parentElement.appendChild(replyBtn);
+      document.querySelectorAll(".reply-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-id");
+          const replyInput = document.createElement("input");
+          replyInput.placeholder = "Write a reply...";
+          const replyBtn = document.createElement("button");
+          replyBtn.textContent = "Post Reply";
 
-        replyBtn.addEventListener("click", async () => {
-          const replyText = replyInput.value.trim();
-          if (!replyText) return;
+          btn.parentElement.appendChild(replyInput);
+          btn.parentElement.appendChild(replyBtn);
 
-          await addDoc(collection(db, "comments"), {
-            storyId,
-            parentId: id,
-            userId: currentUser.uid,
-            username: currentUser.displayName || currentUser.email,
-            text: replyText,
-            timestamp: Date.now()
+          replyBtn.addEventListener("click", async () => {
+            const replyText = replyInput.value.trim();
+            if (!replyText) return;
+
+            await addDoc(collection(db, "comments"), {
+              storyId,
+              parentId: id,
+              userId: currentUser.uid,
+              username: currentUser.displayName || currentUser.email,
+              text: replyText,
+              timestamp: Date.now()
+            });
           });
 
-          await loadComments(); // ✅ Refresh after reply
+          btn.disabled = true;
         });
-
-        btn.disabled = true;
       });
     });
   }
@@ -237,6 +236,8 @@
     const snapshot = await getDocs(q);
     const container = document.getElementById(`replies-${parentId}`);
 
+    container.innerHTML = ""; // ✅ Clear old replies before adding new ones
+
     snapshot.forEach((docSnap) => {
       const reply = docSnap.data();
       const li = document.createElement("li");
@@ -245,6 +246,7 @@
     });
   }
 </script>
+
 
 </body>
 </html>
