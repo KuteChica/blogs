@@ -29,13 +29,15 @@
       <button id="button">👍 Like</button>
       <span id="count">0</span> likes
     </div>
-
     <div class="comment-section">
-      <h3>Comments</h3>
-      <input type="text" id="comment-input" placeholder="Write a comment..." />
-      <button id="comment-btn">Post</button>
-      <ul id="comment-list"></ul>
-    </div>
+  <h3>Comments</h3>
+  <input type="text" id="comment-input" placeholder="Write a comment..." />
+  <button id="comment-btn">Post</button>
+  <ul id="comment-list"></ul>
+</div>
+
+
+    
 
     <button onclick="document.body.classList.toggle('dark-mode')">🌙 Toggle Dark Mode</button>
   </main>
@@ -111,6 +113,9 @@
       commentBtn.disabled = true;
       commentInput.placeholder = "Login to comment";
     } else {
+      commentBtn.disabled = false;
+      commentInput.placeholder = "Write a comment...";
+
       const likeQuery = query(
         collection(db, "likes"),
         where("storyId", "==", storyId),
@@ -150,7 +155,7 @@
         commentInput.value = "";
       });
 
-      listenToComments(user); // ✅ Pass user into listener
+      listenToComments(user);
     }
   });
 
@@ -173,14 +178,10 @@
         li.innerHTML = `
           <strong>${comment.username}</strong>: ${comment.text}
           <div style="margin-top:5px;">
-            <button class="reply-btn" data-id="${commentId}">Reply</button>
             ${currentUser && currentUser.uid === comment.userId ? `<button class="delete-btn" data-id="${commentId}">Delete</button>` : ""}
           </div>
-          <ul class="replies" id="replies-${commentId}"></ul>
         `;
         commentList.appendChild(li);
-
-        loadReplies(commentId);
       });
 
       document.querySelectorAll(".delete-btn").forEach(btn => {
@@ -189,55 +190,6 @@
           await deleteDoc(doc(db, "comments", id));
         });
       });
-
-      document.querySelectorAll(".reply-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const id = btn.getAttribute("data-id");
-          const replyInput = document.createElement("input");
-          replyInput.placeholder = "Write a reply...";
-          const replyBtn = document.createElement("button");
-          replyBtn.textContent = "Post Reply";
-
-          btn.parentElement.appendChild(replyInput);
-          btn.parentElement.appendChild(replyBtn);
-
-          replyBtn.addEventListener("click", async () => {
-            const replyText = replyInput.value.trim();
-            if (!replyText) return;
-
-            await addDoc(collection(db, "comments"), {
-              storyId,
-              parentId: id,
-              userId: currentUser.uid,
-              username: currentUser.displayName || currentUser.email,
-              text: replyText,
-              timestamp: Date.now()
-            });
-          });
-
-          btn.disabled = true;
-        });
-      });
-    });
-  }
-
-  async function loadReplies(parentId) {
-    const q = query(
-      collection(db, "comments"),
-      where("storyId", "==", storyId),
-      where("parentId", "==", parentId),
-      orderBy("timestamp", "asc")
-    );
-    const snapshot = await getDocs(q);
-    const container = document.getElementById(`replies-${parentId}`);
-
-    container.innerHTML = "";
-
-    snapshot.forEach((docSnap) => {
-      const reply = docSnap.data();
-      const li = document.createElement("li");
-      li.innerHTML = `<strong>${reply.username}</strong> ↪ ${reply.text}`;
-      container.appendChild(li);
     });
   }
 </script>
