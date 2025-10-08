@@ -29,6 +29,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -42,6 +43,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
 
     window.submitStory = async function () {
       const title = document.getElementById('title').value;
@@ -50,6 +52,12 @@
 
       if (!title || !content) {
         alert("Please fill in both title and content.");
+        return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) {
+        alert("You must be logged in to post a story.");
         return;
       }
 
@@ -66,6 +74,11 @@
           });
 
           const data = await response.json();
+          if (data.error) {
+            alert("Cloudinary error: " + data.error.message);
+            return;
+          }
+
           imageUrl = data.secure_url;
         } catch (error) {
           alert("Image upload failed: " + error.message);
@@ -74,16 +87,18 @@
       }
 
       try {
-   await addDoc(collection(db, "stories"), {
-  title,
-  content,
-  imageUrl,
-  likes: 0, // ✅ This adds the like field immediately
-  timestamp: Date.now()
-});
+        await addDoc(collection(db, "stories"), {
+          title,
+          content,
+          imageUrl,
+          likes: 0,
+          timestamp: Date.now(),
+          userId: user.uid // ✅ Track who posted the story
+        });
         alert("Story posted successfully!");
         window.location.href = "homepage.html";
       } catch (error) {
+        console.error("Firestore error:", error);
         alert("Failed to post story: " + error.message);
       }
     };
