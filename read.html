@@ -41,82 +41,80 @@
   </main>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-    import {
-      getFirestore,
-      doc,
-      getDoc,
-      updateDoc,
-      increment,
-      collection,
-      addDoc,
-      deleteDoc,
-      query,
-      where,
-      getDocs,
-      orderBy
-    } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
-    import {
-      getAuth,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    updateDoc,
+    increment,
+    collection,
+    addDoc,
+    deleteDoc,
+    query,
+    where,
+    getDocs,
+    orderBy
+  } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBq_YkDy8uPaAVqmNLyUlNhocGp8Er9Prc",
-      authDomain: "sisblog.firebaseapp.com",
-      projectId: "sisblog",
-      storageBucket: "sisblog.appspot.com",
-      messagingSenderId: "353586425293",
-      appId: "1:353586425293:web:9a81103540a665bc4e6884"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyBq_YkDy8uPaAVqmNLyUlNhocGp8Er9Prc",
+    authDomain: "sisblog.firebaseapp.com",
+    projectId: "sisblog",
+    storageBucket: "sisblog.appspot.com",
+    messagingSenderId: "353586425293",
+    appId: "1:353586425293:web:9a81103540a665bc4e6884"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth();
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth();
 
-    const params = new URLSearchParams(window.location.search);
-    const storyId = params.get("id");
+  const params = new URLSearchParams(window.location.search);
+  const storyId = params.get("id");
 
-    const titleEl = document.getElementById("story-title");
-    const contentEl = document.getElementById("story-content");
-    const imageEl = document.getElementById("story-image");
-    const likeBtn = document.getElementById("button");
-    const likeCount = document.getElementById("count");
-    const commentInput = document.getElementById("comment-input");
-    const commentBtn = document.getElementById("comment-btn");
-    const commentList = document.getElementById("comment-list");
+  const titleEl = document.getElementById("story-title");
+  const contentEl = document.getElementById("story-content");
+  const imageEl = document.getElementById("story-image");
+  const likeBtn = document.getElementById("button");
+  const likeCount = document.getElementById("count");
+  const commentInput = document.getElementById("comment-input");
+  const commentBtn = document.getElementById("comment-btn");
+  const commentList = document.getElementById("comment-list");
 
-    const storyRef = doc(db, "stories", storyId);
-    const storySnap = await getDoc(storyRef);
+  const storyRef = doc(db, "stories", storyId);
+  const storySnap = await getDoc(storyRef);
 
-    if (storySnap.exists()) {
-      const story = storySnap.data();
-      titleEl.textContent = story.title;
-      contentEl.textContent = story.content;
-      likeCount.textContent = story.likes || 0;
+  if (storySnap.exists()) {
+    const story = storySnap.data();
+    titleEl.textContent = story.title;
+    contentEl.textContent = story.content;
+    likeCount.textContent = story.likes || 0;
 
-      if (story.imageUrl) {
-        imageEl.src = story.imageUrl;
-        imageEl.style.display = "block";
-      }
-    } else {
-      titleEl.textContent = "Story not found";
-      contentEl.textContent = "";
+    if (story.imageUrl) {
+      imageEl.src = story.imageUrl;
+      imageEl.style.display = "block";
     }
+  } else {
+    titleEl.textContent = "Story not found";
+    contentEl.textContent = "";
+  }
 
-    let currentUser = null;
+  let currentUser = null;
 
-    onAuthStateChanged(auth, async (user) => {
-      currentUser = user;
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
 
-      if (!user) {
-        likeBtn.disabled = true;
-        likeBtn.textContent = "Login to Like";
-        commentBtn.disabled = true;
-        commentInput.placeholder = "Login to comment";
-        return;
-      }
-
+    if (!user) {
+      likeBtn.disabled = true;
+      likeBtn.textContent = "Login to Like";
+      commentBtn.disabled = true;
+      commentInput.placeholder = "Login to comment";
+    } else {
       const likeQuery = query(
         collection(db, "likes"),
         where("storyId", "==", storyId),
@@ -150,101 +148,103 @@
           username: user.displayName || user.email,
           text,
           timestamp: Date.now(),
-          parentId: null // ✅ FIXED: ensures top-level comment is visible
+          parentId: null
         });
 
         commentInput.value = "";
-        loadComments();
+        await loadComments(); // ✅ Now runs after comment is posted
+      });
+    }
+
+    await loadComments(); // ✅ Moved inside auth block to ensure currentUser is ready
+  });
+
+  async function loadComments() {
+    const q = query(
+      collection(db, "comments"),
+      where("storyId", "==", storyId),
+      where("parentId", "==", null),
+      orderBy("timestamp", "asc")
+    );
+    const snapshot = await getDocs(q);
+    commentList.innerHTML = "";
+
+    snapshot.forEach((docSnap) => {
+      const comment = docSnap.data();
+      const commentId = docSnap.id;
+
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <strong>${comment.username}</strong>: ${comment.text}
+        <div style="margin-top:5px;">
+          <button class="reply-btn" data-id="${commentId}">Reply</button>
+          ${currentUser && currentUser.uid === comment.userId ? `<button class="delete-btn" data-id="${commentId}">Delete</button>` : ""}
+        </div>
+        <ul class="replies" id="replies-${commentId}"></ul>
+      `;
+      commentList.appendChild(li);
+
+      loadReplies(commentId);
+    });
+
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-id");
+        await deleteDoc(doc(db, "comments", id));
+        await loadComments();
       });
     });
 
-    async function loadComments() {
-      const q = query(
-        collection(db, "comments"),
-        where("storyId", "==", storyId),
-        where("parentId", "==", null),
-        orderBy("timestamp", "asc")
-      );
-      const snapshot = await getDocs(q);
-      commentList.innerHTML = "";
+    document.querySelectorAll(".reply-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-id");
+        const replyInput = document.createElement("input");
+        replyInput.placeholder = "Write a reply...";
+        const replyBtn = document.createElement("button");
+        replyBtn.textContent = "Post Reply";
 
-      snapshot.forEach((docSnap) => {
-        const comment = docSnap.data();
-        const commentId = docSnap.id;
+        btn.parentElement.appendChild(replyInput);
+        btn.parentElement.appendChild(replyBtn);
 
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <strong>${comment.username}</strong>: ${comment.text}
-          <div style="margin-top:5px;">
-            <button class="reply-btn" data-id="${commentId}">Reply</button>
-            ${currentUser && currentUser.uid === comment.userId ? `<button class="delete-btn" data-id="${commentId}">Delete</button>` : ""}
-          </div>
-          <ul class="replies" id="replies-${commentId}"></ul>
-        `;
-        commentList.appendChild(li);
+        replyBtn.addEventListener("click", async () => {
+          const replyText = replyInput.value.trim();
+          if (!replyText) return;
 
-        loadReplies(commentId);
-      });
-
-      document.querySelectorAll(".delete-btn").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const id = btn.getAttribute("data-id");
-          await deleteDoc(doc(db, "comments", id));
-          loadComments();
-        });
-      });
-
-      document.querySelectorAll(".reply-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const id = btn.getAttribute("data-id");
-          const replyInput = document.createElement("input");
-          replyInput.placeholder = "Write a reply...";
-          const replyBtn = document.createElement("button");
-          replyBtn.textContent = "Post Reply";
-
-          btn.parentElement.appendChild(replyInput);
-          btn.parentElement.appendChild(replyBtn);
-
-          replyBtn.addEventListener("click", async () => {
-            const replyText = replyInput.value.trim();
-            if (!replyText) return;
-
-            await addDoc(collection(db, "comments"), {
-              storyId,
-              parentId: id,
-              userId: currentUser.uid,
-              username: currentUser.displayName || currentUser.email,
-              text: replyText,
-              timestamp: Date.now()
-            });
-
-            loadComments();
+          await addDoc(collection(db, "comments"), {
+            storyId,
+            parentId: id,
+            userId: currentUser.uid,
+            username: currentUser.displayName || currentUser.email,
+            text: replyText,
+            timestamp: Date.now()
           });
 
-          btn.disabled = true;
+          await loadComments(); // ✅ Refresh after reply
         });
+
+        btn.disabled = true;
       });
-    }
+    });
+  }
 
-    async function loadReplies(parentId) {
-      const q = query(
-        collection(db, "comments"),
-        where("storyId", "==", storyId),
-        where("parentId", "==", parentId),
-        orderBy("timestamp", "asc")
-      );
-      const snapshot = await getDocs(q);
-      const container = document.getElementById(`replies-${parentId}`);
+  async function loadReplies(parentId) {
+    const q = query(
+      collection(db, "comments"),
+      where("storyId", "==", storyId),
+      where("parentId", "==", parentId),
+      orderBy("timestamp", "asc")
+    );
+    const snapshot = await getDocs(q);
+    const container = document.getElementById(`replies-${parentId}`);
 
-      snapshot.forEach((docSnap) => {
-        const reply = docSnap.data();
-        const li = document.createElement("li");
-        li.innerHTML = `<strong>${reply.username}</strong> ↪ ${reply.text}`;
-        container.appendChild(li);
-      });
-    }
+    snapshot.forEach((docSnap) => {
+      const reply = docSnap.data();
+      const li = document.createElement("li");
+      li.innerHTML = `<strong>${reply.username}</strong> ↪ ${reply.text}`;
+      container.appendChild(li);
+    });
+  }
+</script>
 
-    loadComments();
-  </script>
 </body>
 </html>
