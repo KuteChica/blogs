@@ -29,172 +29,98 @@
       <button id="button">👍 Like</button>
       <span id="count">0</span> likes
     </div>
-    <div class="comment-section">
-  <h3>Comments</h3>
-  <input type="text" id="comment-input" placeholder="Write a comment..." />
-  <button id="comment-btn">Post</button>
-  <ul id="comment-list"></ul>
-</div>
-
-
-    
 
     <button onclick="document.body.classList.toggle('dark-mode')">🌙 Toggle Dark Mode</button>
   </main>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-  import {
-    getFirestore,
-    doc,
-    getDoc,
-    updateDoc,
-    increment,
-    collection,
-    addDoc,
-    deleteDoc,
-    query,
-    where,
-    getDocs,
-    orderBy,
-    onSnapshot
-  } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
-  import {
-    getAuth,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBq_YkDy8uPaAVqmNLyUlNhocGp8Er9Prc",
-    authDomain: "sisblog.firebaseapp.com",
-    projectId: "sisblog",
-    storageBucket: "sisblog.appspot.com",
-    messagingSenderId: "353586425293",
-    appId: "1:353586425293:web:9a81103540a665bc4e6884"
-  };
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      updateDoc,
+      increment,
+      collection,
+      addDoc,
+      query,
+      where,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth();
+    const firebaseConfig = {
+      apiKey: "AIzaSyBq_YkDy8uPaAVqmNLyUlNhocGp8Er9Prc",
+      authDomain: "sisblog.firebaseapp.com",
+      projectId: "sisblog",
+      storageBucket: "sisblog.appspot.com",
+      messagingSenderId: "353586425293",
+      appId: "1:353586425293:web:9a81103540a665bc4e6884"
+    };
 
-  const params = new URLSearchParams(window.location.search);
-  const storyId = params.get("id");
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
 
-  const titleEl = document.getElementById("story-title");
-  const contentEl = document.getElementById("story-content");
-  const imageEl = document.getElementById("story-image");
-  const likeBtn = document.getElementById("button");
-  const likeCount = document.getElementById("count");
-  const commentInput = document.getElementById("comment-input");
-  const commentBtn = document.getElementById("comment-btn");
-  const commentList = document.getElementById("comment-list");
+    const params = new URLSearchParams(window.location.search);
+    const storyId = params.get("id");
 
-  const storyRef = doc(db, "stories", storyId);
-  const storySnap = await getDoc(storyRef);
+    const titleEl = document.getElementById("story-title");
+    const contentEl = document.getElementById("story-content");
+    const imageEl = document.getElementById("story-image");
+    const likeBtn = document.getElementById("button");
+    const likeCount = document.getElementById("count");
 
-  if (storySnap.exists()) {
-    const story = storySnap.data();
-    titleEl.textContent = story.title;
-    contentEl.textContent = story.content;
-    likeCount.textContent = story.likes || 0;
+    const storyRef = doc(db, "stories", storyId);
+    const storySnap = await getDoc(storyRef);
 
-    if (story.imageUrl) {
-      imageEl.src = story.imageUrl;
-      imageEl.style.display = "block";
-    }
-  } else {
-    titleEl.textContent = "Story not found";
-    contentEl.textContent = "";
-  }
+    if (storySnap.exists()) {
+      const story = storySnap.data();
+      titleEl.textContent = story.title;
+      contentEl.textContent = story.content;
+      likeCount.textContent = story.likes || 0;
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      likeBtn.disabled = true;
-      likeBtn.textContent = "Login to Like";
-      commentBtn.disabled = true;
-      commentInput.placeholder = "Login to comment";
-    } else {
-      commentBtn.disabled = false;
-      commentInput.placeholder = "Write a comment...";
-
-      const likeQuery = query(
-        collection(db, "likes"),
-        where("storyId", "==", storyId),
-        where("userId", "==", user.uid)
-      );
-      const likeSnap = await getDocs(likeQuery);
-      if (!likeSnap.empty) {
-        likeBtn.disabled = true;
-        likeBtn.textContent = "Liked ❤️";
+      if (story.imageUrl) {
+        imageEl.src = story.imageUrl;
+        imageEl.style.display = "block";
       }
-
-      likeBtn.addEventListener("click", async () => {
-        await updateDoc(storyRef, { likes: increment(1) });
-        await addDoc(collection(db, "likes"), {
-          storyId,
-          userId: user.uid,
-          timestamp: Date.now()
-        });
-        likeCount.textContent = parseInt(likeCount.textContent) + 1;
-        likeBtn.disabled = true;
-        likeBtn.textContent = "Liked ❤️";
-      });
-
-      commentBtn.addEventListener("click", async () => {
-        const text = commentInput.value.trim();
-        if (!text) return;
-
-        await addDoc(collection(db, "comments"), {
-          storyId,
-          userId: user.uid,
-          username: user.displayName || user.email,
-          text,
-          timestamp: Date.now(),
-          parentId: null
-        });
-
-        commentInput.value = "";
-      });
-
-      listenToComments(user);
+    } else {
+      titleEl.textContent = "Story not found";
+      contentEl.textContent = "";
     }
-  });
 
-  function listenToComments(currentUser) {
-    const q = query(
-      collection(db, "comments"),
-      where("storyId", "==", storyId),
-      where("parentId", "==", null),
-      orderBy("timestamp", "asc")
-    );
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        likeBtn.disabled = true;
+        likeBtn.textContent = "Login to Like";
+      } else {
+        const likeQuery = query(
+          collection(db, "likes"),
+          where("storyId", "==", storyId),
+          where("userId", "==", user.uid)
+        );
+        const likeSnap = await getDocs(likeQuery);
+        if (!likeSnap.empty) {
+          likeBtn.disabled = true;
+          likeBtn.textContent = "Liked ❤️";
+        }
 
-    onSnapshot(q, (snapshot) => {
-      commentList.innerHTML = "";
-
-      snapshot.forEach((docSnap) => {
-        const comment = docSnap.data();
-        const commentId = docSnap.id;
-
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <strong>${comment.username}</strong>: ${comment.text}
-          <div style="margin-top:5px;">
-            ${currentUser && currentUser.uid === comment.userId ? `<button class="delete-btn" data-id="${commentId}">Delete</button>` : ""}
-          </div>
-        `;
-        commentList.appendChild(li);
-      });
-
-      document.querySelectorAll(".delete-btn").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const id = btn.getAttribute("data-id");
-          await deleteDoc(doc(db, "comments", id));
+        likeBtn.addEventListener("click", async () => {
+          await updateDoc(storyRef, { likes: increment(1) });
+          await addDoc(collection(db, "likes"), {
+            storyId,
+            userId: user.uid,
+            timestamp: Date.now()
+          });
+          likeCount.textContent = parseInt(likeCount.textContent) + 1;
+          likeBtn.disabled = true;
+          likeBtn.textContent = "Liked ❤️";
         });
-      });
+      }
     });
-  }
-</script>
-
-
-
+  </script>
 </body>
 </html>
