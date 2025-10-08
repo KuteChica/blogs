@@ -39,7 +39,6 @@
 
     <button onclick="document.body.classList.toggle('dark-mode')">🌙 Toggle Dark Mode</button>
   </main>
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
   import {
@@ -105,11 +104,7 @@
     contentEl.textContent = "";
   }
 
-  let currentUser = null;
-
   onAuthStateChanged(auth, async (user) => {
-    currentUser = user;
-
     if (!user) {
       likeBtn.disabled = true;
       likeBtn.textContent = "Login to Like";
@@ -154,12 +149,12 @@
 
         commentInput.value = "";
       });
-    }
 
-    listenToComments(); // ✅ Real-time listener
+      listenToComments(user); // ✅ Pass user into listener
+    }
   });
 
-  function listenToComments() {
+  function listenToComments(currentUser) {
     const q = query(
       collection(db, "comments"),
       where("storyId", "==", storyId),
@@ -236,7 +231,7 @@
     const snapshot = await getDocs(q);
     const container = document.getElementById(`replies-${parentId}`);
 
-    container.innerHTML = ""; // ✅ Clear old replies before adding new ones
+    container.innerHTML = "";
 
     snapshot.forEach((docSnap) => {
       const reply = docSnap.data();
@@ -246,6 +241,7 @@
     });
   }
 </script>
+
 
 
 </body>
