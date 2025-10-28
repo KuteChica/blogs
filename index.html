@@ -4,8 +4,6 @@
   <title>Sign Up Page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="css/index.css">
-
-
 </head>
 <body>
 
@@ -28,8 +26,16 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
-    import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+    import { 
+      getAuth, 
+      createUserWithEmailAndPassword, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      setDoc, 
+      doc 
+    } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBq_YkDy8uPaAVqmNLyUlNhocGp8Er9Prc",
@@ -44,6 +50,13 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+
+    // ✅ Automatically redirect logged-in users to home page
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.location.href = "home.html";
+      }
+    });
 
     const signupForm = document.getElementById("signupForm");
     const signupMessage = document.getElementById("signupMessage");
@@ -76,9 +89,8 @@
         signupMessage.style.display = "block";
         signupMessage.textContent = "Signup successful!";
         signupMessage.style.color = "green";
-        signupForm.reset();
 
-        // Redirect to homepage or dashboard
+        // Redirect after success
         window.location.href = "home.html";
       } catch (error) {
         signupMessage.style.display = "block";
